@@ -1,8 +1,27 @@
 * fs2-bson
-  A simple fs2 combinator for parsing bson formatted files to a BSONDocument
+  A simple fs2 combinator for parsing bson formatted files to a
+  BSONDocument
+
+** Example
+   #+BEGIN_SRC bash
+$ sbt "project fs2-bson-examples;run <path_to_bson>.bson"
+[info] Loading settings for project global-plugins from idea.sbt,sbt-updates.sbt,scala-steward.sbt,plugins.sbt,repeat.sbt,metals.sbt ...
+[info] Loading global plugins from /Users/arul.madhavan/.sbt/1.0/plugins
+[info] Loading settings for project fs2-bson-build from plugins.sbt ...
+[info] Loading project definition from /Users/arul.madhavan/dev/fs2-bson/project
+[info] Loading settings for project root from build.sbt ...
+[info] Set current project to root (in build file:/Users/arul.madhavan/dev/fs2-bson/)
+[info] Set current project to fs2-bson-examples (in build file:/Users/arul.madhavan/dev/fs2-bson/)
+[info] Formatting 1 Scala sources...
+[info] Compiling 1 Scala source to /Users/arul.madhavan/dev/fs2-bson/modules/examples/target/scala-2.13/classes ...
+
+Right(BSONObjectID("4f693cb6f7765977170000cd"))
+Right(BSONObjectID("5028673e16ba47d62100000e"))   
+   #+END_SRC
 ** TODO
    - Introduce Logger - done
    - finish setting up example project - done
    - BsonDocument to custom type T - N/A
    - Publish info
    - scalafix on compile
+   - add bloop

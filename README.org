@@ -2,6 +2,7 @@
   A simple fs2 combinator for parsing bson formatted files to a BSONDocument
 ** TODO
    - Introduce Logger - done
-   - BsonDocument to custom type T
-   - finish setting up example project
+   - finish setting up example project - done
+   - BsonDocument to custom type T - N/A
    - Publish info
+   - scalafix on compile

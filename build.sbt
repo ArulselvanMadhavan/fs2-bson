@@ -9,15 +9,22 @@ val commonSettings = Seq(
   organizationName := "BSON parser using fs2",
   startYear := Some(2020),
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  libraryDependencies ++= List(fs2core, fs2io, log4catsCore, log4catsSlf4j, reactiveMongo, scalaTest % Test),
+  libraryDependencies ++= List(fs2core, fs2io, reactiveMongo, scalaTest % Test),
   scalafmtOnCompile := true
 )
 
 lazy val root = (project in file("."))
   .aggregate(
-    `fs2-bson-core`
+    `fs2-bson-core`,
+    `fs2-bson-examples`
   )
 
 lazy val `fs2-bson-core` = project.in(file("modules/core")).settings(commonSettings: _*)
 
-// See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
+lazy val `fs2-bson-examples` =
+  project.in(file("modules/examples"))
+  .settings(commonSettings: _*)
+    .settings(libraryDependencies ++= List(decline, declineEffect, log4catsCore, log4catsSlf4j))
+.settings(addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
+)
+  .dependsOn(`fs2-bson-core`)

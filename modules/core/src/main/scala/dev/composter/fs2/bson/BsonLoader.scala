@@ -4,7 +4,6 @@ import reactivemongo.bson.buffer.DefaultBufferHandler
 import reactivemongo.bson.buffer.ArrayReadableBuffer
 import reactivemongo.bson.BSONDocument
 import java.nio.ByteBuffer
-import io.chrisdavenport.log4cats.Logger
 import cats._
 
 object BsonLoader {
@@ -17,7 +16,7 @@ object BsonLoader {
     b1 << 24 | b2 << 16 | b3 << 8 | b4 << 0
   }
 
-  def bsonDocumentPipe[F[_]: Logger: Monad]: Pipe[F, Byte, Either[Throwable, BSONDocument]] = {
+  def bsonDocumentPipe[F[_]: Monad]: Pipe[F, Byte, Either[Throwable, BSONDocument]] = {
 
     def outputBsonDoc(
         lenBytes: Chunk[Byte],

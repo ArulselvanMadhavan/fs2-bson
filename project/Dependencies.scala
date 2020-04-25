@@ -5,7 +5,10 @@ object Dependencies {
   val fs2Version = "2.2.1"
   val reactiveMongoVersion = "0.20.3"
   val log4catsVersion = "1.0.1"
+  val declineVersion = "1.0.0"
   lazy val catsEffect = "org.typelevel" %% "cats-effect" % catsEffectVersion
+  lazy val decline = "com.monovore" %% "decline" % declineVersion
+  lazy val declineEffect = "com.monovore" %% "decline-effect" % declineVersion
   lazy val fs2core = "co.fs2" %% "fs2-core" % fs2Version
   lazy val fs2io = "co.fs2" %% "fs2-io" % fs2Version
   lazy val log4catsCore = "io.chrisdavenport" %% "log4cats-core"    % log4catsVersion  // Only if you want to Support Any Backend

@@ -1,9 +1,11 @@
 package dev.composter.fs2.bson
-import fs2.{ Chunk, Pipe, Pull, Pure, Stream }
+import fs2.{ Chunk, Pipe, Pull, Stream }
 import reactivemongo.bson.buffer.DefaultBufferHandler
 import reactivemongo.bson.buffer.ArrayReadableBuffer
 import reactivemongo.bson.BSONDocument
 import java.nio.ByteBuffer
+import io.chrisdavenport.log4cats.Logger
+import cats._
 
 object BsonLoader {
 
@@ -15,12 +17,12 @@ object BsonLoader {
     b1 << 24 | b2 << 16 | b3 << 8 | b4 << 0
   }
 
-  def bsonDocumentPipe[F[_]]: Pipe[F, Byte, BSONDocument] = {
+  def bsonDocumentPipe[F[_]: Logger: Monad]: Pipe[F, Byte, Either[Throwable, BSONDocument]] = {
 
     def outputBsonDoc(
         lenBytes: Chunk[Byte],
-        tail: Stream[Pure, Byte]
-    ): Pull[Pure, BSONDocument, Option[Stream[Pure, Chunk[Byte]]]] = {
+        tail: Stream[F, Byte]
+    ): Pull[F, Either[Throwable, BSONDocument], Option[Stream[F, Chunk[Byte]]]] = {
       val lenArray  = lenBytes.toArray
       val lenLittle = ByteBuffer.wrap(lenArray).getInt
       val lenBig    = littleEndianToBigEndian(lenLittle)
@@ -28,28 +30,23 @@ object BsonLoader {
         case Some((docBytes, nextDocs)) => {
           val docArray         = docBytes.toArray
           val bsonDocByteArray = lenArray ++ docArray
-          DefaultBufferHandler.readDocument(ArrayReadableBuffer(bsonDocByteArray)).toEither match {
-            case Right(bsonDoc) => Pull.output1(bsonDoc) >> doPull(nextDocs)
-            case Left(ex) => {
-              println(s"Error occured while reading bsonDocAsBytes ${ex}")
-              println(s"LenLittle-${lenLittle}\tLenBig-${lenBig}\tdocArrayLen-${docArray.length}")
-              doPull(nextDocs)
-            }
-          }
+          Pull.output1(DefaultBufferHandler.readDocument(ArrayReadableBuffer(bsonDocByteArray)).toEither) >> doPull(
+            nextDocs
+          )
         }
         case None => Pull.pure(None)
       }
     }
 
     def doPull(
-        s: Stream[Pure, Byte]
-    ): Pull[Pure, BSONDocument, Option[Stream[Pure, Chunk[Byte]]]] =
+        s: Stream[F, Byte]
+    ): Pull[F, Either[Throwable, BSONDocument], Option[Stream[F, Chunk[Byte]]]] =
       s.pull.unconsN(4, allowFewer = false).flatMap {
         case Some((lenBytes, tail)) => outputBsonDoc(lenBytes, tail)
-        case None                   => Pull.pure(None)
+        case None                   => Pull.pure[F, Option[Stream[F, Chunk[Byte]]]](None)
       }
 
-    (in: Stream[Pure, Byte]) => doPull(in).void.stream
+    (in: Stream[F, Byte]) => doPull(in).void.stream
   }
 
 }

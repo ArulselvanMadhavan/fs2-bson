@@ -9,7 +9,7 @@ val commonSettings = Seq(
   organizationName := "BSON parser using fs2",
   startYear := Some(2020),
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  libraryDependencies ++= List(fs2core, fs2io, reactiveMongo, scalaTest % Test),
+  libraryDependencies ++= List(fs2core, fs2io, log4catsCore, log4catsSlf4j, reactiveMongo, scalaTest % Test),
   scalafmtOnCompile := true
 )
 

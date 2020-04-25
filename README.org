@@ -1,7 +1,7 @@
 * fs2-bson
   A simple fs2 combinator for parsing bson formatted files to a BSONDocument
 ** TODO
-   - Introduce Logger
+   - Introduce Logger - done
    - BsonDocument to custom type T
    - finish setting up example project
    - Publish info
